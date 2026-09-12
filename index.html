@@ -14,23 +14,30 @@
   <div class="noise"></div>
   <div id="root">
     <div class="loader-screen">
-      <div class="loader-grid"></div>
-      <div class="loader-card">
-        <div class="loader-mark">
-          <span>AB</span>
-          <i class="loader-orbit loader-orbit-a"></i>
-          <i class="loader-orbit loader-orbit-b"></i>
+      <div class="circuit-board">
+        <div class="circuit-trace trace-1"></div>
+        <div class="circuit-trace trace-2"></div>
+        <div class="circuit-trace trace-3"></div>
+        <div class="circuit-trace trace-4"></div>
+        <div class="circuit-trace trace-5"></div>
+        <div class="circuit-trace trace-6"></div>
+        <div class="circuit-node node-1" data-label="React"></div>
+        <div class="circuit-node node-2" data-label="Node.js"></div>
+        <div class="circuit-node node-3" data-label="MongoDB"></div>
+        <div class="circuit-node node-4" data-label="Azure"></div>
+        <div class="circuit-node node-5" data-label="Express"></div>
+        <div class="circuit-node node-6" data-label="REST API"></div>
+        <div class="circuit-core">
+          <div class="core-letter letter-a">A</div>
+          <div class="core-letter letter-b">B</div>
+          <div class="core-glow"></div>
         </div>
-        <p>Building Arya's portfolio</p>
-        <div class="loader-track">
-          <span></span>
-          <b></b>
-        </div>
-        <div class="loader-steps">
-          <span>Resume</span>
-          <span>Stack</span>
-          <span>Projects</span>
-          <span>Ready</span>
+        <div class="circuit-status">
+          <div class="status-line" data-text="POWERING UP CIRCUIT"></div>
+          <div class="status-line" data-text="INITIALIZING COMPONENTS"></div>
+          <div class="status-line" data-text="ESTABLISHING CONNECTIONS"></div>
+          <div class="status-line" data-text="RUNNING DIAGNOSTICS"></div>
+          <div class="status-line" data-text="SYSTEM ONLINE"></div>
         </div>
       </div>
     </div>
@@ -52,7 +59,7 @@
       summary: "Aspiring Full Stack Developer skilled in React.js, Node.js, Express.js, and MongoDB. Experienced in building responsive web applications, REST APIs, authentication systems, and payment integrations. Microsoft Certified in AI, security, and data fundamentals.",
       education: "B.Tech CSE, Parul University",
       period: "2023 - 2027",
-      cgpa: "7.54 CGPA"
+      cgpa: "7.56 CGPA"
     };
 
     const links = [
@@ -65,7 +72,7 @@
     const metrics = [
       { value: "2+", label: "Full stack projects" },
       { value: "3", label: "Microsoft certifications" },
-      { value: "7.54", label: "Current CGPA" },
+      { value: "7.56", label: "Current CGPA" },
       { value: "2027", label: "Graduation year" }
     ];
 
@@ -81,10 +88,10 @@
 
     const projects = [
       {
-        title: "Food Ordering App",
+        title: "Campus Canteen Hub",
         stack: "React.js, Node.js, Express.js, MongoDB",
         accent: "fresh",
-        repo: "https://github.com/Aryab0705/food-ordering-app",
+        repo: "https://campus-canteen-hub.vercel.app/",
         points: [
           "Built a full-stack food ordering application with authentication, cart management, and order tracking.",
           "Developed RESTful APIs for authentication, menu management, and order processing.",
@@ -96,7 +103,7 @@
         title: "HomeEase",
         stack: "React.js, Node.js, Express.js, MongoDB",
         accent: "service",
-        repo: "#",
+        repo: "https://home-ease-pied.vercel.app/",
         points: [
           "Built a home service marketplace connecting customers with verified service providers.",
           "Implemented JWT authentication, role-based access control, and booking workflows.",
@@ -160,42 +167,91 @@
     }
 
     function LoadingScreen() {
-      const loadingSteps = ["Resume", "Stack", "Projects", "Ready"];
+      const [activeStep, setActiveStep] = useState(0);
+      const [poweredLetter, setPoweredLetter] = useState(null);
+
+      useEffect(() => {
+        const circuitSequence = [
+          { step: 0, delay: 200, action: () => activateElement('node-1') },
+          { step: 0, delay: 400, action: () => activateElement('trace-1') },
+          { step: 1, delay: 600, action: () => activateElement('node-2') },
+          { step: 1, delay: 800, action: () => activateElement('trace-2') },
+          { step: 2, delay: 1000, action: () => activateElement('node-3') },
+          { step: 2, delay: 1200, action: () => activateElement('trace-3') },
+          { step: 3, delay: 1400, action: () => activateElement('node-4') },
+          { step: 3, delay: 1600, action: () => activateElement('trace-4') },
+          { step: 4, delay: 1800, action: () => activateElement('node-5') },
+          { step: 4, delay: 2000, action: () => activateElement('trace-5') },
+          { step: 0, delay: 2200, action: () => { setPoweredLetter('letter-a'); activateElement('core-glow'); } },
+          { step: 1, delay: 2400, action: () => activateElement('node-6') },
+          { step: 1, delay: 2600, action: () => activateElement('trace-6') },
+          { step: 2, delay: 2800, action: () => { setPoweredLetter('letter-b'); } },
+        ];
+
+        const timeouts = circuitSequence.map(({ step, delay, action }) => 
+          setTimeout(() => {
+            setActiveStep(step);
+            action();
+          }, delay)
+        );
+
+        return () => timeouts.forEach(timeout => clearTimeout(timeout));
+      }, []);
+
+      const activateElement = (className) => {
+        const element = document.querySelector(`.${className}`);
+        if (element) {
+          element.classList.add('active');
+          if (className === 'core-glow') {
+            setTimeout(() => element.style.opacity = '1', 50);
+          }
+        }
+      };
+
+      const statusSteps = [
+        "POWERING UP CIRCUIT",
+        "INITIALIZING COMPONENTS", 
+        "ESTABLISHING CONNECTIONS",
+        "RUNNING DIAGNOSTICS",
+        "SYSTEM ONLINE"
+      ];
+
       return e(motion.div, {
         className: "loader-screen",
         initial: { opacity: 1 },
         exit: { opacity: 0, transition: { duration: 0.65, ease: "easeInOut" } }
       },
-        e("div", { className: "loader-grid" }),
-        e(motion.div, {
-          className: "loader-card",
-          initial: { opacity: 0, y: 28, scale: 0.96 },
-          animate: { opacity: 1, y: 0, scale: 1 },
-          exit: { y: -28, scale: 0.98, opacity: 0 },
-          transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] }
-        },
-          e("div", { className: "loader-mark" },
-            e("span", null, "AB"),
-            e("i", { className: "loader-orbit loader-orbit-a" }),
-            e("i", { className: "loader-orbit loader-orbit-b" })
+        e("div", { className: "circuit-board" },
+          e("div", { className: "circuit-trace trace-1" }),
+          e("div", { className: "circuit-trace trace-2" }),
+          e("div", { className: "circuit-trace trace-3" }),
+          e("div", { className: "circuit-trace trace-4" }),
+          e("div", { className: "circuit-trace trace-5" }),
+          e("div", { className: "circuit-trace trace-6" }),
+          e("div", { className: "circuit-node node-1", "data-label": "React" }),
+          e("div", { className: "circuit-node node-2", "data-label": "Node.js" }),
+          e("div", { className: "circuit-node node-3", "data-label": "MongoDB" }),
+          e("div", { className: "circuit-node node-4", "data-label": "Azure" }),
+          e("div", { className: "circuit-node node-5", "data-label": "Express" }),
+          e("div", { className: "circuit-node node-6", "data-label": "REST API" }),
+          e("div", { className: "circuit-core" },
+            e("div", { 
+              className: `core-letter letter-a ${poweredLetter === 'letter-a' ? 'powered' : ''}` 
+            }, "A"),
+            e("div", { 
+              className: `core-letter letter-b ${poweredLetter === 'letter-b' ? 'powered' : ''}` 
+            }, "B"),
+            e("div", { className: "core-glow" })
           ),
-          e("p", null, "Building Arya's portfolio"),
-          e("div", { className: "loader-track" },
-            e(motion.span, {
-              initial: { scaleX: 0 },
-              animate: { scaleX: 1 },
-              transition: { duration: 2.1, ease: [0.65, 0, 0.35, 1] }
-            }),
-            e("b", null)
-          ),
-          e("div", { className: "loader-steps" }, loadingSteps.map((step, index) =>
-            e(motion.span, {
-              key: step,
-              initial: { opacity: 0.25, y: 8 },
-              animate: { opacity: [0.25, 1, 0.55], y: [8, 0, 0] },
-              transition: { duration: 1.2, delay: index * 0.34, repeat: 1, repeatType: "reverse" }
-            }, step)
-          ))
+          e("div", { className: "circuit-status" },
+            statusSteps.map((step, index) =>
+              e("div", { 
+                key: step, 
+                className: `status-line ${index === activeStep ? 'active' : ''}`,
+                "data-text": step
+              })
+            )
+          )
         )
       );
     }
@@ -266,7 +322,7 @@
           e(motion.article, { className: `project-card ${project.accent}`, key: project.title, initial: { opacity: 0, y: 42, rotateX: 8 }, whileInView: { opacity: 1, y: 0, rotateX: 0 }, viewport: repeatViewport, transition: { duration: 0.72, delay: index * 0.1 }, whileHover: { y: -10, rotate: index % 2 ? -0.7 : 0.7 } },
             e("div", { className: "project-head" },
               e("span", null, `0${index + 1}`),
-              e("a", { href: project.repo, target: project.repo === "#" ? undefined : "_blank", rel: project.repo === "#" ? undefined : "noreferrer", "aria-label": `${project.title} GitHub link` }, "GitHub", e(Icon, { name: "arrow" }))
+              e("a", { href: project.repo, target: project.repo !== "#" ? "_blank" : undefined, rel: project.repo !== "#" ? "noreferrer" : undefined, "aria-label": `${project.title} live link` }, "Live", e(Icon, { name: "arrow" }))
             ),
             e("h3", null, project.title),
             e("p", { className: "stack" }, project.stack),
@@ -371,7 +427,7 @@
       }, []);
 
       useEffect(() => {
-        const timer = window.setTimeout(() => setIsLoading(false), 2450);
+        const timer = window.setTimeout(() => setIsLoading(false), 3000);
         return () => window.clearTimeout(timer);
       }, []);
 
